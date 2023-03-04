@@ -3,7 +3,6 @@ using Domain.Bbqs.Events;
 using Domain.Common;
 using Eveneum;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,8 +23,8 @@ namespace Domain.Bbqs.Repositories
 
             string eventType = "Domain.Bbqs.Events.ThereIsSomeoneElseInTheMood";
 
-            var queryable = Container.GetItemLinqQueryable<EventDto>(true)
-                .Where(e => e.BodyType.Contains(eventType) && e.Body.Date == date)
+            var queryable = Container.GetItemLinqQueryable<EventDocumentDto>(true)
+                .Where(e => e.BodyType.Contains(eventType) && e.Body != null && e.Body.Date == date)
                 .Select(e => e.Body);
 
             var results = await queryable.ToListAsync();
@@ -37,16 +36,16 @@ namespace Domain.Bbqs.Repositories
         }
     }
 
-    internal class EventDto
+    internal class EventDocumentDto
     {
-        public string Id { get; set; }
-        public string DocumentType { get; set; }
-        public string StreamId { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string DocumentType { get; set; } = string.Empty;
+        public string StreamId { get; set; } = string.Empty;
         public int Version { get; set; }
-        public string MetadataType { get; set; }
-        public object Metadata { get; set; }
-        public string BodyType { get; set; }
-        public ThereIsSomeoneElseInTheMood Body { get; set; }
+        public string MetadataType { get; set; } = string.Empty;
+        public object? Metadata { get; set; }
+        public string BodyType { get; set; } = string.Empty;
+        public ThereIsSomeoneElseInTheMood? Body { get; set; }
         public double SortOrder { get; set; }
         public bool Deleted { get; set; }
     }
