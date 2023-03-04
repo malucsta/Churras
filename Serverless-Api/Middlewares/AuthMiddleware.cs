@@ -1,16 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using Newtonsoft.Json;
-using Domain.Entities;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using System.Collections.Generic;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Azure.Functions.Worker.Middleware;
+using Domain.People;
 
 namespace Serverless_Api.Middlewares
 {

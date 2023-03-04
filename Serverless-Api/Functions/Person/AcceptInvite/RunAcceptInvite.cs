@@ -1,8 +1,9 @@
-﻿using Domain.Events;
-using Domain.Entities;
-using Domain.Repositories;
-using Microsoft.Azure.Functions.Worker;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Domain.People;
+using Domain.People.Repositories;
+using Domain.People.Events;
+using Domain.Bbqs.Repositories;
 
 namespace Serverless_Api
 {
@@ -10,10 +11,12 @@ namespace Serverless_Api
     {
         private readonly Person _user;
         private readonly IPersonRepository _repository;
-        public RunAcceptInvite(IPersonRepository repository, Person user)
+        private readonly IBbqRepository _bbqs;
+        public RunAcceptInvite(IBbqRepository bbqs, IPersonRepository repository, Person user)
         {
             _user = user;
            _repository = repository;
+            _bbqs = bbqs;
         }
 
         [Function(nameof(RunAcceptInvite))]
@@ -22,10 +25,15 @@ namespace Serverless_Api
             var answer = await req.Body<InviteAnswer>();
 
             var person = await _repository.GetAsync(_user.Id);
-           
-            person.Apply(new InviteWasAccepted { InviteId = inviteId, IsVeg = answer.IsVeg, PersonId = person.Id });
+            var bbq = await _bbqs.GetAsync(inviteId);
+
+            var @event = new InviteWasAccepted { InviteId = inviteId, IsVeg = answer.IsVeg, PersonId = person.Id };
+            person.Apply(@event);
+            bbq.When(@event);
+            bbq.Apply(@event);
 
             await _repository.SaveAsync(person);
+            await _bbqs.SaveAsync(bbq);
 
             //TODO: implementar efeito do aceite do convite no churrasco
             //quando tiver 7 pessoas ele está confirmado

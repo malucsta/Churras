@@ -1,10 +1,10 @@
-using Domain;
 using Eveneum;
 using System.Net;
-using Domain.Events;
-using Domain.Entities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Domain.Common;
+using Domain.People;
+using Domain.Bbqs;
 
 namespace Serverless_Api
 {

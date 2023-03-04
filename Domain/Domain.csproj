@@ -7,12 +7,17 @@
 
   <ItemGroup>
 	 <PackageReference Include="Eveneum" Version="6.4.1" />
+	 <PackageReference Include="FluentResults" Version="3.15.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CrossCutting\CrossCutting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="People\UseCases\" />
   </ItemGroup>
 
 </Project>

@@ -2,13 +2,17 @@
 using Eveneum;
 using System.Linq;
 using CrossCutting;
-using Domain.Entities;
 using System.Threading.Tasks;
-using Domain.Events;
-using Domain.Repositories;
 using Microsoft.Azure.Cosmos;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using Domain.Common;
+using Domain.Bbqs.Repositories;
+using Domain.People;
+using Domain.People.Repositories;
+using Domain.Bbqs;
+using Domain.Lookups;
+using Domain.People.Events;
 
 namespace Domain
 {
@@ -34,7 +38,7 @@ namespace Domain
 
             client.GetDatabase(DATABASE)
                 .GetContainer("Lookups")
-                .UpsertItemAsync(new Lookups { PeopleIds = Data.People.Select(o => o.Id).ToList(), ModeratorIds = Data.People.Where(p => p.IsCoOwner).Select(o => o.Id).ToList() })
+                .UpsertItemAsync(new Lookup { PeopleIds = Data.People.Select(o => o.Id).ToList(), ModeratorIds = Data.People.Where(p => p.IsCoOwner).Select(o => o.Id).ToList() })
                 .GetAwaiter()
                 .GetResult();
 

@@ -1,6 +1,8 @@
 using System.Net;
-using Domain.Entities;
-using Domain.Repositories;
+using Domain.Bbqs;
+using Domain.Bbqs.Repositories;
+using Domain.People;
+using Domain.People.Repositories;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
@@ -26,7 +28,10 @@ namespace Serverless_Api
             foreach (var bbqId in moderator.Invites.Where(i => i.Date > DateTime.Now).Select(o => o.Id).ToList())
             {
                 var bbq = await _bbqs.GetAsync(bbqId);
-                snapshots.Add(bbq.TakeSnapshot());
+                
+                // MODIFIED: churrascos que não vão acontecer não são listados
+                if(bbq.Status != BbqStatus.ItsNotGonnaHappen) 
+                    snapshots.Add(bbq.TakeSnapshot());
             }
 
             return await req.CreateResponse(HttpStatusCode.Created, snapshots);

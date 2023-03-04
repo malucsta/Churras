@@ -1,7 +1,11 @@
 using CrossCutting;
-using Domain.Entities;
-using Domain.Events;
-using Domain.Repositories;
+using Domain.Bbqs.Events;
+using Domain.Bbqs.Repositories;
+using Domain.Lookups;
+using Domain.People;
+using Domain.People.Events;
+using Domain.People.Repositories;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
@@ -29,13 +33,26 @@ namespace Serverless_Api
 
             bbq.Apply(new BbqStatusUpdated(moderationRequest.GonnaHappen, moderationRequest.TrincaWillPay));
 
-            var lookups = await _snapshots.AsQueryable<Lookups>("Lookups").SingleOrDefaultAsync();
+            var lookups = await _snapshots.AsQueryable<Lookup>("Lookups").SingleOrDefaultAsync();
 
             foreach (var personId in lookups.PeopleIds)
             {
+                // MODIFIED: para não mandar mais para os moderadores
                 var person = await _persons.GetAsync(personId);
-                var @event = new PersonHasBeenInvitedToBbq(bbq.Id, bbq.Date, bbq.Reason);
-                person.Apply(@event);
+
+                switch (person.IsCoOwner, moderationRequest.GonnaHappen)
+                {
+                    case (true, false):
+                        var edeclineEvent = new InviteWasDeclined { InviteId = bbq.Id, PersonId = person.Id };
+                        person.When(edeclineEvent);
+                        person.Apply(edeclineEvent);
+                        break;
+                    case (false, true):
+                        var inviteEvent = new PersonHasBeenInvitedToBbq(bbq.Id, bbq.Date, bbq.Reason);
+                        person.Apply(inviteEvent);
+                        break;
+                }
+
                 await _persons.SaveAsync(person);
             }
 
