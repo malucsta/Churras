@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Bbqs.Errors;
 using Domain.Bbqs.Events;
 using Domain.Common;
-using Domain.People;
+using Domain.People.Errors;
 using Domain.People.Events;
 using FluentResults;
 

@@ -1,40 +1,36 @@
 using System.Net;
-using Domain.Bbqs;
-using Domain.Bbqs.Repositories;
+using Domain.Bbqs.UseCases;
 using Domain.People;
-using Domain.People.Repositories;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Serverless_Api.Extensions.ErrorTreatment;
 
 namespace Serverless_Api
 {
     public partial class RunGetProposedBbqs
     {
         private readonly Person _user;
-        private readonly IBbqRepository _bbqs;
-        private readonly IPersonRepository _repository;
-        public RunGetProposedBbqs(IPersonRepository repository, IBbqRepository bbqs, Person user)
+        private readonly IListBbqs _useCase;
+
+        public RunGetProposedBbqs(Person user, IListBbqs useCase)
         {
             _user = user;
-            _bbqs = bbqs;
-            _repository = repository;
+            _useCase = useCase;
         }
 
         [Function(nameof(RunGetProposedBbqs))]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "churras")] HttpRequestData req)
         {
-            var snapshots = new List<object>();
-            var moderator = await _repository.GetAsync(_user.Id);
-            foreach (var bbqId in moderator.Invites.Where(i => i.Date > DateTime.Now).Select(o => o.Id).ToList())
+            var request = new GetProposedBbqsRequest { UserId = _user.Id };
+            var result = await _useCase.Execute(request);
+            
+            if (result.IsFailed)
             {
-                var bbq = await _bbqs.GetAsync(bbqId);
-                
-                // MODIFIED: churrascos que não vão acontecer não são listados
-                if(bbq.Status != BbqStatus.ItsNotGonnaHappen) 
-                    snapshots.Add(bbq.TakeSnapshot());
+                var objectResult = result.Errors.ToObjectResult();
+                return await req.CreateResponse(objectResult.StatusCode, objectResult.Data);
             }
 
-            return await req.CreateResponse(HttpStatusCode.Created, snapshots);
+            return await req.CreateResponse(HttpStatusCode.OK, result.Value);
         }
     }
 }

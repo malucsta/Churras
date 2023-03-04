@@ -33,7 +33,7 @@ namespace Application.UseCases.Bbqs
         {
             var result = await _repository.ThereIsBbqAt(request.Date);
             if (result)
-                return Result.Fail(new ConflictingBbqs(request.Date));
+                return Result.Fail(new ConflictingBbqsError(request.Date));
             
             var churras = new Bbq();
             var applyResult = churras.Apply(new ThereIsSomeoneElseInTheMood(Guid.NewGuid(), request.Date, request.Reason, request.IsTrincasPaying));

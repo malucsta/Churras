@@ -22,7 +22,10 @@ namespace Domain.Common
         {
             foreach (var @event in events)
             {
-                Mutate(@event);
+                var result = Mutate(@event);
+                if (result.IsFailed)
+                    return;
+                
                 Version += 1;
             }
         }

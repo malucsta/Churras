@@ -1,64 +1,39 @@
-using CrossCutting;
-using Domain.Bbqs.Events;
-using Domain.Bbqs.Repositories;
-using Domain.Lookups;
-using Domain.People;
-using Domain.People.Events;
-using Domain.People.Repositories;
-using Google.Protobuf.WellKnownTypes;
+using Domain.Bbqs.UseCases;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Serverless_Api.Extensions.ErrorTreatment;
+using System.Net;
 
 namespace Serverless_Api
 {
     public partial class RunModerateBbq
     {
-        private readonly SnapshotStore _snapshots;
-        private readonly IPersonRepository _persons;
-        private readonly IBbqRepository _repository;
+        private readonly IModerateBbq _useCase; 
 
-        public RunModerateBbq(IBbqRepository repository, SnapshotStore snapshots, IPersonRepository persons)
+        public RunModerateBbq(IModerateBbq useCase)
         {
-            _persons = persons;
-            _snapshots = snapshots;
-            _repository = repository;
+            _useCase = useCase;
         }
 
         [Function(nameof(RunModerateBbq))]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "churras/{id}/moderar")] HttpRequestData req, string id)
         {
-            var moderationRequest = await req.Body<ModerateBbqRequest>();
+            var input = await req.Body<ModerateBbqRequest>();
+            
+            if (input is null)
+                return await req.CreateResponse(HttpStatusCode.BadRequest, "input is required.");
+            
+            input!.Id = id;
 
-            var bbq = await _repository.GetAsync(id);
+            var result = await _useCase.Execute(input);
 
-            bbq.Apply(new BbqStatusUpdated(moderationRequest.GonnaHappen, moderationRequest.TrincaWillPay));
-
-            var lookups = await _snapshots.AsQueryable<Lookup>("Lookups").SingleOrDefaultAsync();
-
-            foreach (var personId in lookups.PeopleIds)
+            if (result.IsFailed)
             {
-                // MODIFIED: para não mandar mais para os moderadores
-                var person = await _persons.GetAsync(personId);
-
-                switch (person.IsCoOwner, moderationRequest.GonnaHappen)
-                {
-                    case (true, false):
-                        var edeclineEvent = new InviteWasDeclined { InviteId = bbq.Id, PersonId = person.Id };
-                        person.When(edeclineEvent);
-                        person.Apply(edeclineEvent);
-                        break;
-                    case (false, true):
-                        var inviteEvent = new PersonHasBeenInvitedToBbq(bbq.Id, bbq.Date, bbq.Reason);
-                        person.Apply(inviteEvent);
-                        break;
-                }
-
-                await _persons.SaveAsync(person);
+                var objectResult = result.Errors.ToObjectResult();
+                return await req.CreateResponse(objectResult.StatusCode, objectResult.Data);
             }
 
-            await _repository.SaveAsync(bbq);
-
-            return await req.CreateResponse(System.Net.HttpStatusCode.OK, bbq.TakeSnapshot());
+            return await req.CreateResponse(HttpStatusCode.OK, result.Value);
         }
     }
 }

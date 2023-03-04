@@ -1,5 +1,7 @@
 ﻿using Domain.Common;
+using Domain.People.Errors;
 using Domain.People.Events;
+using FluentResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +18,17 @@ namespace Domain.People
         {
             Invites = new List<Invite>();
         }
-        public void When(PersonHasBeenCreated @event)
+
+        public Result When(PersonHasBeenCreated @event)
         {
             Id = @event.Id;
             Name = @event.Name;
             IsCoOwner = @event.IsCoOwner;
+
+            return Result.Ok();
         }
 
-        public void When(PersonHasBeenInvitedToBbq @event)
+        public Result When(PersonHasBeenInvitedToBbq @event)
         {
             Invites = Invites.Append(new Invite
             {
@@ -32,22 +37,30 @@ namespace Domain.People
                 Bbq = $"{@event.Date} - {@event.Reason}",
                 Status = InviteStatus.Pending
             });
+
+            return Result.Ok();
         }
 
-        public void When(InviteWasAccepted @event)
+        public Result When(InviteWasAccepted @event)
         {
             var invite = Invites.FirstOrDefault(x => x.Id == @event.InviteId);
+            
+            if (invite is null)
+                return Result.Fail(new InviteNotFoundError(@event.InviteId));
+            
             invite.Status = InviteStatus.Accepted;
+            return Result.Ok();
         }
 
-        public void When(InviteWasDeclined @event)
+        public Result When(InviteWasDeclined @event)
         {
             var invite = Invites.FirstOrDefault(x => x.Id == @event.InviteId);
-
-            if (invite == null)
-                return;
+            
+            if (invite is null)
+                return Result.Fail(new InviteNotFoundError(@event.InviteId));
 
             invite.Status = InviteStatus.Declined;
+            return Result.Ok();
         }
 
         public object? TakeSnapshot()

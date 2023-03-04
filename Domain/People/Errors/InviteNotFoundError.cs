@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Errors;
 
-namespace Domain.Bbqs.Errors
+namespace Domain.People.Errors
 {
     public class InviteNotFoundError : BarbecueError
     {

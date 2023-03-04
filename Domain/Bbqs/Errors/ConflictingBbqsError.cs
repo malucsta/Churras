@@ -3,9 +3,9 @@ using System;
 
 namespace Domain.Bbqs.Errors
 {
-    public class ConflictingBbqs : BarbecueError
+    public class ConflictingBbqsError : BarbecueError
     {
-        public ConflictingBbqs(DateTime date)
+        public ConflictingBbqsError(DateTime date)
         {
             _message = $"Barbecue at date {date} conflicts with another one";
         }

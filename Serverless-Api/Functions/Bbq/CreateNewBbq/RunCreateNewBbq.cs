@@ -1,13 +1,6 @@
-using Eveneum;
 using System.Net;
-using CrossCutting;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Domain.Common;
-using Domain.Bbqs.Events;
-using Domain.Bbqs;
-using Domain.People.Events;
-using Domain.Lookups;
 using Domain.People;
 using Domain.Bbqs.UseCases;
 using Serverless_Api.Extensions.ErrorTreatment;
