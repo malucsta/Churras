@@ -49,7 +49,7 @@ namespace Domain.Bbqs
 
             NumberOfConfirmations++;
             
-            if (NumberOfConfirmations >= 7)
+            if (NumberOfConfirmations >= 5)
                 Status = BbqStatus.Confirmed; 
 
             var vegetables = @event.IsVeg ? 0.60m : 0.30m;
@@ -70,7 +70,7 @@ namespace Domain.Bbqs
 
             NumberOfConfirmations--;
 
-            if (NumberOfConfirmations < 7)
+            if (NumberOfConfirmations < 5)
                 Status = BbqStatus.PendingConfirmations;
 
             ShoppingList.Remove(@event.PersonId);
@@ -78,13 +78,28 @@ namespace Domain.Bbqs
             return Result.Ok();
         }
 
-        public object GetShoppingList()
+        public object GetShoppingListSnapshot()
         {
             return new
             {
                 Id,
                 TotalMeatInKilogram = ShoppingList.Sum(x => x.Value.MeatInKilogram),
                 TotalVegetablesInKilogram = ShoppingList.Sum(x => x.Value.VegetablesInKilogram)
+            };
+        }
+
+        public object GetShoppingListEstimateSnapshot(decimal meatPricePerKg, decimal vegetablesPricePerKg)
+        {
+            var estimate = new Dictionary<string, string>();
+            
+            foreach(var item in ShoppingList)
+                estimate.Add(item.Key, 
+                    $"R$: {decimal.Round((item.Value.MeatInKilogram * meatPricePerKg) + (item.Value.VegetablesInKilogram * vegetablesPricePerKg), 2)}" );
+
+            return new
+            {
+                Id,
+                estimate
             };
         }
 

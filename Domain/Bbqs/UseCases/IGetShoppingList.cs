@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using FluentResults;
+using System.Threading.Tasks;
 
 namespace Domain.Bbqs.UseCases
 {
@@ -10,6 +11,6 @@ namespace Domain.Bbqs.UseCases
 
     public interface IGetShoppingList
     {
-        Task<object?> Execute(GetShoppingListRequest request);
+        Task<Result<object?>> Execute(GetShoppingListRequest request);
     }
 }

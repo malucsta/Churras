@@ -14,6 +14,7 @@ namespace Application
             services.AddScoped<IModerateBbq, ModerateBbq>();
             services.AddScoped<IListBbqs, ListBbqs>();
             services.AddScoped<IGetShoppingList, GetShoppingList>();
+            services.AddScoped<IGetShoppingListEstimate, GetShoppingListEstimate>();
 
             services.AddScoped<IAcceptInvite, AcceptInvite>();
             services.AddScoped<IDeclineInvite, DeclineInvite>();

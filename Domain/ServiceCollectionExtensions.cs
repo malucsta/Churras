@@ -85,8 +85,8 @@ namespace Domain
             new Person { Id = "795fc8f2-1473-4f19-b33e-ade1a42ed123", Name = "Alexandre Morales", IsCoOwner = false },
             new Person { Id = "addd0967-6e16-4328-bab1-eec63bf31968", Name = "Leandro Espera", IsCoOwner = false },
 
-            new Person { Id = Guid.NewGuid().ToString(), Name = "Leticia Pontes", IsCoOwner = false },
-            new Person { Id = Guid.NewGuid().ToString(), Name = "Maria Luisa", IsCoOwner = false },
+            //new Person { Id = Guid.NewGuid().ToString(), Name = "Leticia Pontes", IsCoOwner = false },
+            //new Person { Id = Guid.NewGuid().ToString(), Name = "Maria Luisa", IsCoOwner = false },
         };
     }
 }

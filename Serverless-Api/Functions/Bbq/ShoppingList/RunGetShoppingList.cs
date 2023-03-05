@@ -6,6 +6,7 @@ using Domain.People;
 using Domain.People.Repositories;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Serverless_Api.Extensions.ErrorTreatment;
 
 namespace Serverless_Api.Functions.Bbq.ShoppingList
 {
@@ -23,8 +24,14 @@ namespace Serverless_Api.Functions.Bbq.ShoppingList
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "churras/{bbqId}/lista-de-compras")] HttpRequestData req, string bbqId)
         {
             var result = await _useCase.Execute(new GetShoppingListRequest { Id = bbqId, UserId = _user.Id });
+            
+            if (result.IsFailed)
+            {
+                var objectResult = result.Errors.ToObjectResult();
+                return await req.CreateResponse(objectResult.StatusCode, objectResult.Data);
+            }
 
-            return await req.CreateResponse(HttpStatusCode.OK, result);
+            return await req.CreateResponse(HttpStatusCode.OK, result.Value);
         }
     }
 }

@@ -33,6 +33,9 @@ namespace Serverless_Api.Extensions.ErrorTreatment
                 if (error.Code == BarbecueErrorCode.RESOURCE_conflict)
                     return (HttpStatusCode.Conflict, null);
 
+                if (error.Code == BarbecueErrorCode.OPERATION_unauthorized)
+                    return (HttpStatusCode.Unauthorized, null);
+
                 return (HttpStatusCode.BadRequest, null);
             }
             else

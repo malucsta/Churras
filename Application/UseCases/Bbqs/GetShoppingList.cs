@@ -4,6 +4,10 @@ using Domain.Bbqs.UseCases;
 using Domain.People.Repositories;
 using Domain.People;
 using Eveneum;
+using FluentResults;
+using Domain.Common.Errors;
+using Domain.Bbqs.Errors;
+using Domain.People.Errors;
 
 namespace Application.UseCases.Bbqs
 {
@@ -16,15 +20,22 @@ namespace Application.UseCases.Bbqs
             _bbqs = bbqs;
             _repository = repository;
         }
-        public async Task<object?> Execute(GetShoppingListRequest request)
+        public async Task<Result<object?>> Execute(GetShoppingListRequest request)
         {
             var person = await _repository.GetAsync(request.UserId);
+           
+            if (person is null)
+                return Result.Fail(new PersonNotFoundError(request.UserId));
 
             if (!person.IsCoOwner)
-                return null; 
+                return Result.Fail(new UnauthorizedOperation("GetShoppingList", request.UserId)); 
 
             var bbq = await _bbqs.GetAsync(request.Id);
-            return bbq.GetShoppingList();
+            
+            if (bbq is null)
+                return Result.Fail(new BbqNotFoundError(request.Id));
+
+            return Result.Ok(bbq.GetShoppingListSnapshot());
         }
     }
 }
