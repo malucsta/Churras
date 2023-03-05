@@ -30,6 +30,9 @@ namespace Domain.People
 
         public Result When(PersonHasBeenInvitedToBbq @event)
         {
+            if (Invites.Select(x => x.Id).Contains(@event.Id))
+                return Result.Ok();
+
             Invites = Invites.Append(new Invite
             {
                 Id = @event.Id,

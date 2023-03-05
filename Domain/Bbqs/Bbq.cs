@@ -44,8 +44,12 @@ namespace Domain.Bbqs
 
         public Result When(InviteWasAccepted @event)
         {
+            if(ShoppingList.Keys.Contains(@event.PersonId))
+                return Result.Ok();
+
             NumberOfConfirmations++;
             
+            // it has only 5 different ids actually
             if (NumberOfConfirmations >= 7)
                 Status = BbqStatus.Confirmed; 
 
@@ -64,7 +68,8 @@ namespace Domain.Bbqs
                 return Result.Fail(new InviteNotFoundError(@event.PersonId));
 
             NumberOfConfirmations--;
-             
+
+            // it has only 5 different ids actually
             if (NumberOfConfirmations < 7)
                 Status = BbqStatus.PendingConfirmations;
 

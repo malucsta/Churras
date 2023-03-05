@@ -4,41 +4,43 @@ using Domain.People;
 using Domain.People.Repositories;
 using Domain.People.Events;
 using Domain.Bbqs.Repositories;
+using Azure.Core;
+using System.Net;
+using FluentResults;
+using Domain.People.UseCases;
+using Serverless_Api.Extensions.ErrorTreatment;
 
 namespace Serverless_Api
 {
     public partial class RunAcceptInvite
     {
         private readonly Person _user;
-        private readonly IPersonRepository _repository;
-        private readonly IBbqRepository _bbqs;
-        public RunAcceptInvite(IBbqRepository bbqs, IPersonRepository repository, Person user)
+        private readonly IAcceptInvite _useCase;
+        public RunAcceptInvite(Person user, IAcceptInvite useCase)
         {
             _user = user;
-           _repository = repository;
-            _bbqs = bbqs;
+           _useCase = useCase;
         }
 
         [Function(nameof(RunAcceptInvite))]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "person/invites/{inviteId}/accept")] HttpRequestData req, string inviteId)
         {
             var answer = await req.Body<InviteAnswer>();
+            if (answer is null)
+                return await req.CreateResponse(HttpStatusCode.BadRequest, "answer is required.");
 
-            var person = await _repository.GetAsync(_user.Id);
-            var bbq = await _bbqs.GetAsync(inviteId);
+            answer.InviteId = inviteId;
+            answer.UserId = _user.Id;
 
-            var @event = new InviteWasAccepted { InviteId = inviteId, IsVeg = answer.IsVeg, PersonId = person.Id };
-            person.Apply(@event);
-            bbq.When(@event);
-            bbq.Apply(@event);
+            var result = await _useCase.Execute(answer);
+            
+            if (result.IsFailed)
+            {
+                var objectResult = result.Errors.ToObjectResult();
+                return await req.CreateResponse(objectResult.StatusCode, objectResult.Data);
+            }
 
-            await _repository.SaveAsync(person);
-            await _bbqs.SaveAsync(bbq);
-
-            //TODO: implementar efeito do aceite do convite no churrasco
-            //quando tiver 7 pessoas ele está confirmado
-
-            return await req.CreateResponse(System.Net.HttpStatusCode.OK, person.TakeSnapshot());
+            return await req.CreateResponse(HttpStatusCode.OK, result.Value);
         }
     }
 }

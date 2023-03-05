@@ -18,14 +18,14 @@ namespace Serverless_Api
         [Function(nameof(RunModerateBbq))]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "churras/{id}/moderar")] HttpRequestData req, string id)
         {
-            var input = await req.Body<ModerateBbqRequest>();
+            var request = await req.Body<ModerateBbqRequest>();
             
-            if (input is null)
-                return await req.CreateResponse(HttpStatusCode.BadRequest, "input is required.");
-            
-            input!.Id = id;
+            if (request is null)
+                return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");
 
-            var result = await _useCase.Execute(input);
+            request!.Id = id;
+
+            var result = await _useCase.Execute(request);
 
             if (result.IsFailed)
             {

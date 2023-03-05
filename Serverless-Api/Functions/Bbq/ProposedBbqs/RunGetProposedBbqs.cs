@@ -22,6 +22,9 @@ namespace Serverless_Api
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "churras")] HttpRequestData req)
         {
             var request = new GetProposedBbqsRequest { UserId = _user.Id };
+            if (request is null)
+                return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");
+
             var result = await _useCase.Execute(request);
             
             if (result.IsFailed)

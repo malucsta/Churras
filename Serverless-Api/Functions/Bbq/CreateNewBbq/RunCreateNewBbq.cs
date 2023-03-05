@@ -21,12 +21,12 @@ namespace Serverless_Api
         [Function(nameof(RunCreateNewBbq))]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "churras")] HttpRequestData req)
         {
-            var input = await req.Body<NewBbqRequest>();
+            var request = await req.Body<NewBbqRequest>();
 
-            if (input is null)
-                return await req.CreateResponse(HttpStatusCode.BadRequest, "input is required.");
+            if (request is null)
+                return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");
             
-            var result = await _useCase.CreateBbqAsync(input);
+            var result = await _useCase.CreateBbqAsync(request);
 
             if (result.IsFailed)
             {
