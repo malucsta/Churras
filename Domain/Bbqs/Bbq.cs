@@ -16,7 +16,7 @@ namespace Domain.Bbqs
         public DateTime Date { get; set; }
         public bool IsTrincasPaying { get; set; }
         public int NumberOfConfirmations { get; set; } = 0;
-        public Dictionary<string, ShoppingList> ShoppingList { private get; set; } 
+        public Dictionary<string, ShoppingList> ShoppingList { get; set; } 
             = new Dictionary<string, ShoppingList>();
 
         public Result When(ThereIsSomeoneElseInTheMood @event)
@@ -49,7 +49,6 @@ namespace Domain.Bbqs
 
             NumberOfConfirmations++;
             
-            // it has only 5 different ids actually
             if (NumberOfConfirmations >= 7)
                 Status = BbqStatus.Confirmed; 
 
@@ -62,6 +61,8 @@ namespace Domain.Bbqs
 
         public Result When(InviteWasDeclined @event)
         {
+            // only afeccts bbq when invite already accepted was declined 
+
             var list = ShoppingList.FirstOrDefault(x => x.Key == @event.PersonId);
            
             if (list.Value is null) 
@@ -69,7 +70,6 @@ namespace Domain.Bbqs
 
             NumberOfConfirmations--;
 
-            // it has only 5 different ids actually
             if (NumberOfConfirmations < 7)
                 Status = BbqStatus.PendingConfirmations;
 
