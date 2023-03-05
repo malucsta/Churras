@@ -30,6 +30,10 @@ namespace Application.UseCases.People
 
             var @event = new InviteWasDeclined { InviteId = answer.InviteId, PersonId = person.Id };
             var invite = person.Invites.FirstOrDefault(x => x.Id == answer.InviteId);
+            
+            var result = person.Apply(@event);
+            if (result.IsFailed)
+                return Result.Fail(result.Errors);
 
             if (invite is not null && invite.Status == InviteStatus.Accepted)
             {
@@ -37,11 +41,13 @@ namespace Application.UseCases.People
                 if (bbq is null)
                     return Result.Fail(new BbqNotFoundError(answer.InviteId));
 
-                bbq.Apply(@event);
+                var bbqResult = bbq.Apply(@event);
+                if (bbqResult.IsFailed)
+                    return Result.Fail(bbqResult.Errors);
+
                 await _bbq.SaveAsync(bbq);
             }
 
-            person.Apply(@event);
             await _repository.SaveAsync(person);
 
             return Result.Ok(person.TakeSnapshot());

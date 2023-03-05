@@ -50,7 +50,10 @@ namespace Domain.People
             
             if (invite is null)
                 return Result.Fail(new InviteNotFoundError(@event.InviteId));
-            
+
+            if (invite.Status == InviteStatus.Accepted) 
+                return Result.Ok();
+
             invite.Status = InviteStatus.Accepted;
             return Result.Ok();
         }

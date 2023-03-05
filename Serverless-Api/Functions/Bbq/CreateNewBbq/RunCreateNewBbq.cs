@@ -4,6 +4,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Domain.People;
 using Domain.Bbqs.UseCases;
 using Serverless_Api.Extensions.ErrorTreatment;
+using System.ComponentModel.DataAnnotations;
 
 namespace Serverless_Api
 {
@@ -22,6 +23,10 @@ namespace Serverless_Api
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "churras")] HttpRequestData req)
         {
             var request = await req.Body<NewBbqRequest>();
+
+            //ValidationResult result = await _createRequestValidator.ValidateAsync(request);
+            //if (!result.IsValid)
+            //    return BadRequest(result);
 
             if (request is null)
                 return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");

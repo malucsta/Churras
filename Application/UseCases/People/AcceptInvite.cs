@@ -31,8 +31,11 @@ namespace Application.UseCases.People
                 return Result.Fail(new BbqNotFoundError(answer.InviteId));
 
             var @event = new InviteWasAccepted { InviteId = answer.InviteId, IsVeg = answer.IsVeg, PersonId = person.Id };
-            person.Apply(@event);
-            bbq.Apply(@event);
+            var result = person.Apply(@event);
+            if(result.IsFailed) return Result.Fail(result.Errors);
+            
+            var bbqResult = bbq.Apply(@event);
+            if (bbqResult.IsFailed) return Result.Fail(bbqResult.Errors);
 
             await _repository.SaveAsync(person);
             await _bbqs.SaveAsync(bbq);

@@ -49,7 +49,7 @@ namespace Domain.Bbqs
 
             NumberOfConfirmations++;
             
-            if (NumberOfConfirmations >= 5)
+            if (NumberOfConfirmations >= 7)
                 Status = BbqStatus.Confirmed; 
 
             var vegetables = @event.IsVeg ? 0.60m : 0.30m;
@@ -70,7 +70,7 @@ namespace Domain.Bbqs
 
             NumberOfConfirmations--;
 
-            if (NumberOfConfirmations < 5)
+            if (NumberOfConfirmations < 7)
                 Status = BbqStatus.PendingConfirmations;
 
             ShoppingList.Remove(@event.PersonId);
