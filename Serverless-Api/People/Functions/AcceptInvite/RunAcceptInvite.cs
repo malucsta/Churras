@@ -10,7 +10,7 @@ using FluentResults;
 using Domain.People.UseCases;
 using Serverless_Api.Extensions.ErrorTreatment;
 
-namespace Serverless_Api
+namespace Serverless_Api.People.Functions.AcceptInvite
 {
     public partial class RunAcceptInvite
     {
@@ -19,7 +19,7 @@ namespace Serverless_Api
         public RunAcceptInvite(Person user, IAcceptInvite useCase)
         {
             _user = user;
-           _useCase = useCase;
+            _useCase = useCase;
         }
 
         [Function(nameof(RunAcceptInvite))]
@@ -33,7 +33,7 @@ namespace Serverless_Api
             answer.UserId = _user.Id;
 
             var result = await _useCase.Execute(answer);
-            
+
             if (result.IsFailed)
             {
                 var objectResult = result.Errors.ToObjectResult();

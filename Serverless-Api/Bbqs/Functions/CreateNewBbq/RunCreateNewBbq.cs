@@ -6,7 +6,7 @@ using Domain.Bbqs.UseCases;
 using Serverless_Api.Extensions.ErrorTreatment;
 using System.ComponentModel.DataAnnotations;
 
-namespace Serverless_Api
+namespace Serverless_Api.Bbqs.Functions.CreateNewBbq
 {
     public partial class RunCreateNewBbq
     {
@@ -15,7 +15,7 @@ namespace Serverless_Api
 
         public RunCreateNewBbq(Person user, ICreateBbq useCase)
         {
-            _user = user;   
+            _user = user;
             _useCase = useCase;
         }
 
@@ -30,7 +30,7 @@ namespace Serverless_Api
 
             if (request is null)
                 return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");
-            
+
             var result = await _useCase.CreateBbqAsync(request);
 
             if (result.IsFailed)
@@ -38,7 +38,7 @@ namespace Serverless_Api
                 var objectResult = result.Errors.ToObjectResult();
                 return await req.CreateResponse(objectResult.StatusCode, objectResult.Data);
             }
-                
+
             return await req.CreateResponse(HttpStatusCode.Created, result.Value);
         }
     }

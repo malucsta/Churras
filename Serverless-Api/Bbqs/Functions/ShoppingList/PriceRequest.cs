@@ -1,4 +1,4 @@
-﻿namespace Serverless_Api.Functions.Bbq.ShoppingList
+﻿namespace Serverless_Api.Bbqs.Functions.ShoppingList
 {
     public class PriceRequest
     {

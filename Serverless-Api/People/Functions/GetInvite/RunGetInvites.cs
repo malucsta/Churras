@@ -6,7 +6,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Serverless_Api.Extensions.ErrorTreatment;
 
-namespace Serverless_Api
+namespace Serverless_Api.People.Functions.GetInvite
 {
     public partial class RunGetInvites
     {
@@ -23,7 +23,7 @@ namespace Serverless_Api
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "person/invites")] HttpRequestData req)
         {
             var request = new GetInvitesRequest { UserId = _user.Id };
-            
+
             var result = await _useCase.Execute(request);
 
             if (result.IsFailed)
