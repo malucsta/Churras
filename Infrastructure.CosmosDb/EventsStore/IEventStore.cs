@@ -1,6 +1,6 @@
 ﻿using Eveneum;
 
-namespace Domain.Common
+namespace Infrastructure.CosmosDb.EventsStore
 {
     public interface IEventStore<T> : IEventStore
     {

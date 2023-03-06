@@ -7,12 +7,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serverless_Api.Extensions;
 using Serverless_Api.Extensions.Validators;
+using Infrastructure.CosmosDb;
 
 var host = new HostBuilder()
     .ConfigureServices(services =>
     {
         services.AddEventStore();
-        services.AddDomainDependencies();
+        services.AddInfrastructureDependencies();
         services.InjectUseCases();
         services.ConfigureValidators();
         services.AddLogging(b => b.AddConsole());

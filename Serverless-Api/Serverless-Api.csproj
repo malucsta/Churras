@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\CrossCutting\CrossCutting.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure.CosmosDb\Infrastructure.CosmosDb.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

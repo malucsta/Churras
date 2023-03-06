@@ -1,25 +1,22 @@
-﻿using System;
-using Eveneum;
-using System.Linq;
-using CrossCutting;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using Domain.Common;
+﻿using CrossCutting;
 using Domain.Bbqs.Repositories;
-using Domain.People;
-using Domain.People.Repositories;
 using Domain.Bbqs;
 using Domain.Lookups;
 using Domain.People.Events;
+using Domain.People.Repositories;
+using Domain.People;
+using Eveneum;
+using Infrastructure.CosmosDb.Bbqs;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.DependencyInjection;
+using Infrastructure.CosmosDb.EventsStore;
 
-namespace Domain
+namespace Infrastructure.CosmosDb
 {
     public static partial class ServiceCollectionExtensions
     {
         private const string DATABASE = "Churras";
-        public static IServiceCollection AddDomainDependencies(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services)
             => services.AddSingleton(new Person { Id = "e5c7c990-7d75-4445-b5a2-700df354a6a0" })
                 .AddEventStoreDependencies()
                 .AddRepositoriesDependencies();
@@ -84,9 +81,6 @@ namespace Domain
             new Person { Id = "3f74e6bd-11b2-4d48-a294-239a7a2ce7d5", Name = "Gustavo Sanfoninha", IsCoOwner = true },
             new Person { Id = "795fc8f2-1473-4f19-b33e-ade1a42ed123", Name = "Alexandre Morales", IsCoOwner = false },
             new Person { Id = "addd0967-6e16-4328-bab1-eec63bf31968", Name = "Leandro Espera", IsCoOwner = false },
-
-            //new Person { Id = Guid.NewGuid().ToString(), Name = "Leticia Pontes", IsCoOwner = false },
-            //new Person { Id = Guid.NewGuid().ToString(), Name = "Maria Luisa", IsCoOwner = false },
         };
     }
 }

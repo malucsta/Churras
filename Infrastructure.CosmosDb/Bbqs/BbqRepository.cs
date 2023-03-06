@@ -1,17 +1,20 @@
 ﻿using CrossCutting;
+using Domain.Bbqs;
 using Domain.Bbqs.Events;
+using Domain.Bbqs.Repositories;
 using Domain.Common;
 using Eveneum;
+using Infrastructure.CosmosDb.EventsStore;
 using Microsoft.Azure.Cosmos;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Domain.Bbqs.Repositories
+namespace Infrastructure.CosmosDb.Bbqs
 {
     internal class BbqRepository : StreamRepository<Bbq>, IBbqRepository
     {
-        public BbqRepository(IEventStore<Bbq> eventStore) : base(eventStore) 
+        public BbqRepository(IEventStore<Bbq> eventStore) : base(eventStore)
         {
             _eventStore = eventStore;
         }

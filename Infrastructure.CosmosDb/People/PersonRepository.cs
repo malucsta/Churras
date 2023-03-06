@@ -1,6 +1,5 @@
 ﻿using Domain.Common;
-using Microsoft.Azure.Cosmos;
-using System.Security.Cryptography.X509Certificates;
+using Infrastructure.CosmosDb.EventsStore;
 
 namespace Domain.People.Repositories
 {

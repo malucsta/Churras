@@ -1,7 +1,7 @@
 ﻿using Eveneum;
 using Microsoft.Azure.Cosmos;
 
-namespace Domain.Common
+namespace Infrastructure.CosmosDb.EventsStore
 {
     public class EventStore<T> : EventStore, IEventStore<T>
     {
