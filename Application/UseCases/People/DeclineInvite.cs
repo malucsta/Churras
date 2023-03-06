@@ -35,7 +35,7 @@ namespace Application.UseCases.People
             if (result.IsFailed)
                 return Result.Fail(result.Errors);
 
-            if (invite is not null && invite.Status == InviteStatus.Accepted)
+            if (invite is not null && invite.Status == InviteStatus.Declined)
             {
                 var bbq = await _bbq.GetAsync(answer.InviteId);
                 if (bbq is null)
