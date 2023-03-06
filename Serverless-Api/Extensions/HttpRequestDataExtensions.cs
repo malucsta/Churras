@@ -12,19 +12,28 @@ namespace System
 
             if (body != null)
             {
-                await response.WriteAsJsonAsync(body);
+                await response.WriteAsJsonAsync(body, statusCode);
             }
             return response;
         }
 
         public async static Task<T?> Body<T>(this HttpRequestData request)
         {
-            string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+            try
+            {
+                string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
 
-            if (string.IsNullOrEmpty(requestBody))
+                if (string.IsNullOrEmpty(requestBody))
+                    return default;
+
+                return JsonConvert.DeserializeObject<T>(requestBody);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
                 return default;
-
-            return JsonConvert.DeserializeObject<T>(requestBody);
+            }
+           
         }
     }
 }

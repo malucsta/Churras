@@ -1,5 +1,6 @@
 ﻿using Domain.Common.Errors;
 using FluentResults;
+using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using System.Dynamic;
 using System.Net;
@@ -42,6 +43,16 @@ namespace Serverless_Api.Extensions.ErrorTreatment
             {
                 return (HttpStatusCode.InternalServerError, null);
             }
+        }
+
+        public static object ToInvalidRequestObject(this ValidationResult result)
+        {
+            var errors = new Dictionary<string, string>();
+
+            foreach (var error in result.Errors)
+                errors.Add(error.PropertyName, error.ErrorMessage);
+
+            return errors;
         }
 
         private static dynamic? DictionaryToObject(this Dictionary<string, object> dict)

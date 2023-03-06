@@ -1,4 +1,6 @@
 using Domain.Bbqs.UseCases;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Serverless_Api.Extensions.ErrorTreatment;
@@ -9,7 +11,6 @@ namespace Serverless_Api.Bbqs.Functions.ModerateBbqs
     public partial class RunModerateBbq
     {
         private readonly IModerateBbq _useCase;
-
         public RunModerateBbq(IModerateBbq useCase)
         {
             _useCase = useCase;
@@ -21,7 +22,7 @@ namespace Serverless_Api.Bbqs.Functions.ModerateBbqs
             var request = await req.Body<ModerateBbqRequest>();
 
             if (request is null)
-                return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");
+                return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");            
 
             request!.Id = id;
 

@@ -4,7 +4,8 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Domain.People;
 using Domain.Bbqs.UseCases;
 using Serverless_Api.Extensions.ErrorTreatment;
-using System.ComponentModel.DataAnnotations;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace Serverless_Api.Bbqs.Functions.CreateNewBbq
 {
@@ -12,11 +13,13 @@ namespace Serverless_Api.Bbqs.Functions.CreateNewBbq
     {
         private readonly Person _user;
         private readonly ICreateBbq _useCase;
+        private readonly IValidator<NewBbqRequest> _validator;
 
-        public RunCreateNewBbq(Person user, ICreateBbq useCase)
+        public RunCreateNewBbq(Person user, ICreateBbq useCase, IValidator<NewBbqRequest> validator)
         {
             _user = user;
             _useCase = useCase;
+            _validator = validator;
         }
 
         [Function(nameof(RunCreateNewBbq))]
@@ -24,9 +27,12 @@ namespace Serverless_Api.Bbqs.Functions.CreateNewBbq
         {
             var request = await req.Body<NewBbqRequest>();
 
-            //ValidationResult result = await _createRequestValidator.ValidateAsync(request);
-            //if (!result.IsValid)
-            //    return BadRequest(result);
+            if (request is null)
+                return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");
+
+            ValidationResult validationResult = await _validator.ValidateAsync(request!);
+            if (!validationResult.IsValid)
+                return await req.CreateResponse(HttpStatusCode.BadRequest, validationResult.ToInvalidRequestObject());
 
             if (request is null)
                 return await req.CreateResponse(HttpStatusCode.BadRequest, "request is required.");

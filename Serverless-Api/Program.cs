@@ -6,6 +6,7 @@ using Application;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serverless_Api.Extensions;
+using Serverless_Api.Extensions.Validators;
 
 var host = new HostBuilder()
     .ConfigureServices(services =>
@@ -13,6 +14,7 @@ var host = new HostBuilder()
         services.AddEventStore();
         services.AddDomainDependencies();
         services.InjectUseCases();
+        services.ConfigureValidators();
         services.AddLogging(b => b.AddConsole());
         var serviceProvider = services.BuildServiceProvider();
 
