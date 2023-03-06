@@ -22,3 +22,8 @@ Na User Story de Criar um Novo Churrasco, a especificação é a seguinte:
 "A interface "IEventStore" está sendo utilizada direto na camada de _api_. Aliás, ela nem deveria ser acessível por esta camada. Encapsule-a para que ela seja acessível apenas dentro de seu _assembly_ de origem (_Domain_)"
 
 A criação de uma nova camada que acessa o EventStore não no domínio quebraria um tanto essa regra, então fica como extra apenas para seguir a lógica da separação. 
+
+
+###### Observação
+
+A regra do aceite e rejeição do convite impõem sete repetições, entretanto, existem apenas 5 ids distintos. Respeitando a requisição, a regra continua como 7 na entidade BBQ. 
