@@ -31,11 +31,16 @@ namespace Application.UseCases.People
             var @event = new InviteWasDeclined { InviteId = answer.InviteId, PersonId = person.Id };
             var invite = person.Invites.FirstOrDefault(x => x.Id == answer.InviteId);
             
+            if (invite is null)
+                return Result.Fail(new InviteNotFoundError(answer.InviteId));
+            
+            var oldStatus = invite.Status;
+
             var result = person.Apply(@event);
             if (result.IsFailed)
                 return Result.Fail(result.Errors);
 
-            if (invite is not null && invite.Status == InviteStatus.Accepted)
+            if (invite is not null && oldStatus == InviteStatus.Accepted)
             {
                 var bbq = await _bbq.GetAsync(answer.InviteId);
                 if (bbq is null)
