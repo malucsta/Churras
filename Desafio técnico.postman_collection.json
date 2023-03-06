@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "be76598e-3d07-46c2-baae-6b5f8e6f10a3",
+		"_postman_id": "c101b8d8-6c70-48fb-afe8-b8512ae49b0d",
 		"name": "Desafio técnico",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19509065"
+		"_exporter_id": "22007743"
 	},
 	"item": [
 		{
@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"date\": \"2023-01-20T18:00:00\",\r\n    \"reason\": \"Comemorar a entrada do novo dev back da mitsui\",\r\n    \"isTrincasPaying\": true\r\n}",
+					"raw": "{\r\n    \"date\": \"2023-03-30T18:00:00\",\r\n    \"reason\": \"Teste\",\r\n    \"isTrincasPaying\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -200,12 +200,18 @@
 					{
 						"key": "personId",
 						"value": "{{moderador-1}}",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "personId",
+						"value": "addd0967-6e16-4328-bab1-eec63bf31968",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"isVeg\": false\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -213,7 +219,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:7296/api/person/invites/3d9702aa-6f1c-437c-a3ad-bd6c1daea143/decline",
+					"raw": "http://localhost:7296/api/person/invites/5de644bc-29f6-4cb0-af70-5b1908f8504a/decline",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -223,8 +229,86 @@
 						"api",
 						"person",
 						"invites",
-						"3d9702aa-6f1c-437c-a3ad-bd6c1daea143",
+						"5de644bc-29f6-4cb0-af70-5b1908f8504a",
 						"decline"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Quanto tem que comprar nessa brincadeira ai? ",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "personId",
+						"value": "171f9858-ddb1-4adf-886b-2ea36e0f0644",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7296/api/churras/af93a758-1358-4077-b3ef-c9ff0cafdeea/lista-de-compras",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7296",
+					"path": [
+						"api",
+						"churras",
+						"af93a758-1358-4077-b3ef-c9ff0cafdeea",
+						"lista-de-compras"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Quanto que vai custar essa brincadeira ai? ",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "personId",
+						"value": "171f9858-ddb1-4adf-886b-2ea36e0f0644",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"meatPricePerKg\": 25,\r\n    \"vegetablesPricePerKg\": 7.99\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7296/api/churras/2441a036-5a81-4699-b9ca-3250ed92361c/lista-de-compras/estimativa",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7296",
+					"path": [
+						"api",
+						"churras",
+						"2441a036-5a81-4699-b9ca-3250ed92361c",
+						"lista-de-compras",
+						"estimativa"
 					]
 				}
 			},
